@@ -25,7 +25,7 @@ namespace Regression
         static double Regression_SS = 0;
         private void button1_Click(object sender, EventArgs e)
         {
-            String filePath = "./hw1_data1.csv";
+            String filePath = "D:/hw1_data1.csv";
             DataTable tb = new DataTable();
             read_csv(filePath, ref tb);
             double[] X = new double[100];
@@ -33,12 +33,12 @@ namespace Regression
             double[] Y = new double[100];
             double[,] dataset = new double[100, 2];
             Convert2Array(ref X, ref Y, ref Log_Y, tb);
-            draw_origin_point(ref X, ref Y);
-            Build_train_dataset(ref X, ref Log_Y,ref dataset);
-            LinearRegression(dataset,ref X);
+            draw_origin_point( X,  Y);
+            Build_train_dataset( X,  Log_Y, dataset);
+            LinearRegression(dataset, X);
 
         }
-        public void LinearRegression(double[,] point,ref double[] X)
+        public void LinearRegression(double[,] point, double[] X)
         {
             if (point.GetLength(0) < 2)
             {
@@ -60,24 +60,12 @@ namespace Regression
             }
             RCB = Numerator / Denominator;
             RCA = AverageY - RCB * AverageX;
-            draw_spline(ref X);
-            Console.WriteLine("回歸係數A： " + RCA.ToString("0.0000"));
-            Console.WriteLine("回歸係數B： " + RCB.ToString("0.0000"));
-            Console.WriteLine(string.Format("方程為： y = {0} + {1} * x",
-                RCA.ToString("0.0000"), RCB.ToString("0.0000")));
+            draw_spline( X);
             for (int i = 0; i < point.GetLength(0); i++)
             {
                 Residual_SS += (point[i, 1] - RCA - RCB * point[i, 0]) * (point[i, 1] - RCA - RCB * point[i, 0]);
                 Regression_SS += (RCA + RCB * point[i, 0] - AverageY) * (RCA + RCB * point[i, 0] - AverageY);
             }
-            label1.Text = "回歸係數A： " + RCA.ToString("0.0000") + "\n" +
-                "回歸係數B： " + RCB.ToString("0.0000") + "\n" + string.Format("方程為： y = {0} + {1} * x",
-                RCA.ToString("0.0000"), RCB.ToString("0.0000")) + "\n" +
-                "剩餘平方和： " + Residual_SS.ToString("0.0000") + "\n" +
-                "回歸平方和： " + Regression_SS.ToString("0.0000")+ "\n";
-
-            Console.WriteLine("剩餘平方和： " + Residual_SS.ToString("0.0000"));
-            Console.WriteLine("回歸平方和： " + Regression_SS.ToString("0.0000"));
         }
         private void chart1_Click(object sender, EventArgs e)
         {
@@ -128,7 +116,7 @@ namespace Regression
                 Y[i] = Convert.ToDouble(tb.Rows[i][1]);
             }
         }
-        public void Build_train_dataset(ref double[] X, ref double[] Log_Y,ref double[,] dataset)
+        public void Build_train_dataset( double[] X,  double[] Log_Y, double[,] dataset)
         {
             for (int i = 0; i <= 99; i++)
             {
@@ -136,7 +124,7 @@ namespace Regression
                 dataset[i, 1] = Log_Y[i];
             }
         }
-        public void draw_origin_point(ref double[] X, ref double[] Y)
+        public void draw_origin_point( double[] X,  double[] Y)
         {
             this.chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
             for (int i = 0; i <= 99; i++)
@@ -144,14 +132,17 @@ namespace Regression
                 chart1.Series[0].Points.AddXY(X[i], Y[i]);
             }
         }
-        public void draw_spline(ref double[]X)
+        public void draw_spline(double[]X)
         {
+            double e = 2.71828182846;
             double y = 0;
-            for(int i=0;i<=99;i++)
+            for (int i=0;i<=99;i++)
             {
-                y = RCA * X[i] + RCB;
+                y = Math.Pow(e, RCA) * Math.Pow(e,RCB*X[i]);
                 this.chart1.Series[1].Points.AddXY(X[i], y);
             }
+            label1.Text = "轉換後的Beta值為: "+ Convert.ToString(RCB) + "\n轉換後的Alpha值為: "
+                +Convert.ToString(Math.Pow(e, RCA));
         }
     }
 }

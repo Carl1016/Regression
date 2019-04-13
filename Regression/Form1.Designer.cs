@@ -58,10 +58,12 @@
             this.chart1.Name = "chart1";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series1.Color = System.Drawing.Color.Black;
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Color = System.Drawing.Color.Red;
             series2.Legend = "Legend1";
             series2.Name = "Series2";
             this.chart1.Series.Add(series1);
